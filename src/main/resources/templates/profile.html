@@ -43,9 +43,11 @@
                     <div class="mb-3">
                         <h5>Основная информация</h5>
                         <p><strong>Имя пользователя:</strong>
-                            <span sec:authentication="name"></span>
+                            <span th:text="${user.username}"></span>
                         </p>
-                        <p><strong>Дата регистрации:</strong> 25 июля 2025</p>
+                        <p><strong>Дата регистрации:</strong>
+                        <span th:text="${#temporals.format(user.registrationDate, 'dd MMMM yyyy')}"></span>
+                        </p>
                     </div>
 
                     <div class="mb-3">

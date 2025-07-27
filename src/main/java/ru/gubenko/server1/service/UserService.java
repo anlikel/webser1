@@ -11,6 +11,7 @@ import ru.gubenko.server1.model.entity.User;
 import ru.gubenko.server1.repository.RoleRepository;
 import ru.gubenko.server1.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 @Service
@@ -46,6 +47,7 @@ public class UserService implements UserDetailsService {
         User admin=new User();
         admin.setUsername("admin");
         admin.setPassword(passwordEncoder.encode("1234"));
+        admin.setRegistrationDate(LocalDateTime.now());
         admin.setEnabled(true);
         Role adminRole=roleRepository.findByName("ADMIN");
         admin.setRoles(Collections.singletonList(adminRole));
@@ -60,6 +62,7 @@ public class UserService implements UserDetailsService {
         User user=new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(password));
+        user.setRegistrationDate(LocalDateTime.now());
         user.setEnabled(true);
 
         Role userRole=roleRepository.findByName("USER");
@@ -85,4 +88,13 @@ public class UserService implements UserDetailsService {
                 user.getRoles()
         );
     }
+
+    public User findByUserName(String username){
+        User user=userRepository.findByUsername(username).get();
+        if(user==null){
+            throw new UsernameNotFoundException("user not found");
+        }
+        return user;
+    }
+
 }
