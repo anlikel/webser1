@@ -97,4 +97,17 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
+    public void updateUserContactInfo(String username,String email, String phone){
+        User user=userRepository.findByUsername(username).get();
+        if(user==null){
+            throw new UsernameNotFoundException("user not found");
+        }
+        if(email!=null && !email.isEmpty()){
+            user.setEmail(email);
+        }
+        if(phone!=null && !phone.isEmpty()){
+            user.setPhone(phone);
+        }
+        userRepository.save(user);
+    }
 }

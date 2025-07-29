@@ -1,9 +1,13 @@
 package ru.gubenko.server1.controller;
 
+import jakarta.validation.constraints.Positive;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.gubenko.server1.service.UserService;
 
 @Controller
@@ -27,6 +31,7 @@ public class DashBoardController {
         if (authentication != null && authentication.isAuthenticated()) {
             var user=userService.findByUserName(authentication.getName());
             model.addAttribute("user",user);
+            model.addAttribute("pageTtile","профиль");
         }
         return "profile";
     }
@@ -37,6 +42,25 @@ public class DashBoardController {
             model.addAttribute("username", authentication.getName());
         }
         return "settings";
+    }
+
+    @PostMapping("/profile/update")
+    public String updateProfile(
+        @RequestParam String email,
+        @RequestParam String phone,
+        Authentication authentication,
+        RedirectAttributes redirectAttributes){
+        if(authentication!=null && authentication.isAuthenticated()){
+            try{
+                userService.updateUserContactInfo(authentication.getName(), email,phone);
+                redirectAttributes.addFlashAttribute("success","обновлено");
+            }
+            catch(Exception e){
+                redirectAttributes.addFlashAttribute("errorMessage","ошибка при обновлении данных "
+                +e.getMessage());
+            }
+        }
+        return "redirect:/profile";
     }
 
 }

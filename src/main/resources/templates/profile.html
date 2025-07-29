@@ -52,17 +52,23 @@
 
                     <div class="mb-3">
                         <h5>Контактные данные</h5>
-                        <form>
+                        <form th:action="@{/profile/update}" method="post">
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" value="user@example.com">
+                                <input type="email" class="form-control" id="email"
+                                       th:value="${user.email ?: 'xxx@xxx.xxx'}" name="email">
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Телефон</label>
-                                <input type="tel" class="form-control" id="phone" value="+7 (123) 456-7890">
+                                <input type="tel" class="form-control" id="phone"
+                                       th:value="${user.phone ?: '+x (xxx) xxx-xx-xx'}" name="phone">
                             </div>
                             <button type="submit" class="btn btn-primary">Сохранить изменения</button>
                         </form>
+
+                        <!-- Добавьте отображение сообщений об успехе/ошибке -->
+                        <div th:if="${successMessage}" class="alert alert-success mt-3" th:text="${successMessage}"></div>
+                        <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
                     </div>
                 </div>
             </div>
