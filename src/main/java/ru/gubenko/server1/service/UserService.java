@@ -6,26 +6,31 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.gubenko.server1.model.entity.Message;
 import ru.gubenko.server1.model.entity.Role;
 import ru.gubenko.server1.model.entity.User;
+import ru.gubenko.server1.repository.MessageRepository;
 import ru.gubenko.server1.repository.RoleRepository;
 import ru.gubenko.server1.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private PasswordEncoder passwordEncoder;
+    private final MessageRepository messageRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository,RoleRepository roleRepository,PasswordEncoder passwordEncoder){
+    public UserService(UserRepository userRepository,RoleRepository roleRepository,PasswordEncoder passwordEncoder,MessageRepository messageRepository){
         this.userRepository=userRepository;
         this.roleRepository=roleRepository;
         this.passwordEncoder=passwordEncoder;
+        this.messageRepository=messageRepository;
         initRoles();
         initAdmin();
     }
@@ -109,5 +114,31 @@ public class UserService implements UserDetailsService {
             user.setPhone(phone);
         }
         userRepository.save(user);
+    }
+
+
+    public List<Message> getUserMessages(String username){
+        User user=userRepository.findByUsername(username).get();
+        if(user==null){
+            throw new UsernameNotFoundException("user not found");
+        }
+        return messageRepository.findByRecipientOrderByCreatedAtDesc(user);
+    }
+
+    public Long getUnreadCount(String username){
+        User user=userRepository.findByUsername(username).get();
+        if(user==null){
+            throw new UsernameNotFoundException("user not found");
+        }
+        return messageRepository.countByRecipientAndIsReadFalse(user);
+    }
+
+    public void markAllAsRead(String username){
+        User user=userRepository.findByUsername(username).get();
+        if(user==null){
+            throw new UsernameNotFoundException("user not found");
+        }
+        List<Message>unreadMessages=messageRepository.findByRecipientAndIsReadFalse(user);
+        messageRepository.saveAll(unreadMessages);
     }
 }
