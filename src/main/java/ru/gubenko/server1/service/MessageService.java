@@ -11,6 +11,7 @@ import ru.gubenko.server1.repository.RoleRepository;
 import ru.gubenko.server1.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -24,27 +25,24 @@ public class MessageService {
     }
 
     public List<Message> getUserMessages(String username){
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
+        User user=getUserOrThrow(username);
         return messageRepository.findByRecipientOrderByCreatedAtDesc(user);
     }
 
     public Long getUnreadCount(String username){
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
+        User user=getUserOrThrow(username);
         return messageRepository.countByRecipientAndIsReadFalse(user);
     }
 
     public void markAllAsRead(String username){
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
+        User user=getUserOrThrow(username);
         List<Message>unreadMessages=messageRepository.findByRecipientAndIsReadFalse(user);
         messageRepository.saveAll(unreadMessages);
+    }
+
+    private User getUserOrThrow(String username){
+        Optional<User> opt= Optional.of(userRepository.findByUsername(username)
+                .orElseThrow(()->new UsernameNotFoundException("user not found")));
+        return opt.get();
     }
 }
