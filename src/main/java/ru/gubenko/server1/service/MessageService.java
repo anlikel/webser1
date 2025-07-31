@@ -10,6 +10,7 @@ import ru.gubenko.server1.repository.MessageRepository;
 import ru.gubenko.server1.repository.RoleRepository;
 import ru.gubenko.server1.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,5 +45,19 @@ public class MessageService {
         Optional<User> opt= Optional.of(userRepository.findByUsername(username)
                 .orElseThrow(()->new UsernameNotFoundException("user not found")));
         return opt.get();
+    }
+
+    public void sendMessage(String senderUsername,String recipientUsername,String content){
+        User sender=getUserOrThrow(senderUsername);
+        User recipient=getUserOrThrow(recipientUsername);
+
+        Message message=new Message();
+        message.setContent(content);
+        message.setSender(sender);
+        message.setRecipient(recipient);
+        message.setCreatedAt(LocalDateTime.now());
+        message.setRead(false);
+
+        messageRepository.save(message);
     }
 }

@@ -21,6 +21,10 @@ public class Message {
     @JoinColumn(name="user_id")
     private User recipient;
 
+    @ManyToOne
+    @JoinColumn(name="sender_id")
+    private User sender;
+
     public long getId() {
         return Id;
     }
@@ -59,5 +63,13 @@ public class Message {
 
     public void setRecipient(User recipient) {
         this.recipient = recipient;
+    }
+
+    public User getSender() {
+        return sender;
+    }
+
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 }
