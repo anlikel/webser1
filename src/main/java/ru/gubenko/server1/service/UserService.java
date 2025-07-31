@@ -16,6 +16,7 @@ import ru.gubenko.server1.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -59,7 +60,7 @@ public class UserService implements UserDetailsService {
 
 
     public void registerNewUser(String username,String password){
-        if(userRepository.findByUsername(username).isPresent()){
+        if(userRepository.isPresent(username)){
             throw new RuntimeException("user already exists");
         }
         User user=new User();
@@ -79,10 +80,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
+        User user=getUserOrThrow(username);
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
@@ -93,18 +91,12 @@ public class UserService implements UserDetailsService {
     }
 
     public User findByUserName(String username){
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
+        User user=getUserOrThrow(username);
         return user;
     }
 
     public void updateUserContactInfo(String username,String email, String phone){
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
+        User user=getUserOrThrow(username);
         if(email!=null && !email.isEmpty()){
             user.setEmail(email);
         }
@@ -112,5 +104,11 @@ public class UserService implements UserDetailsService {
             user.setPhone(phone);
         }
         userRepository.save(user);
+    }
+
+    private User getUserOrThrow(String username){
+        Optional<User> opt= Optional.of(userRepository.findByUsername(username)
+                .orElseThrow(()->new UsernameNotFoundException("user not found")));
+        return opt.get();
     }
 }
