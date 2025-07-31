@@ -22,15 +22,13 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final MessageRepository messageRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository,RoleRepository roleRepository,PasswordEncoder passwordEncoder,MessageRepository messageRepository){
+    public UserService(UserRepository userRepository,RoleRepository roleRepository,PasswordEncoder passwordEncoder){
         this.userRepository=userRepository;
         this.roleRepository=roleRepository;
         this.passwordEncoder=passwordEncoder;
-        this.messageRepository=messageRepository;
         initRoles();
         initAdmin();
     }
@@ -114,31 +112,5 @@ public class UserService implements UserDetailsService {
             user.setPhone(phone);
         }
         userRepository.save(user);
-    }
-
-
-    public List<Message> getUserMessages(String username){
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
-        return messageRepository.findByRecipientOrderByCreatedAtDesc(user);
-    }
-
-    public Long getUnreadCount(String username){
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
-        return messageRepository.countByRecipientAndIsReadFalse(user);
-    }
-
-    public void markAllAsRead(String username){
-        User user=userRepository.findByUsername(username).get();
-        if(user==null){
-            throw new UsernameNotFoundException("user not found");
-        }
-        List<Message>unreadMessages=messageRepository.findByRecipientAndIsReadFalse(user);
-        messageRepository.saveAll(unreadMessages);
     }
 }

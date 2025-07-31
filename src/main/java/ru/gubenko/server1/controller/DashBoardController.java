@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import ru.gubenko.server1.service.MessageService;
 import ru.gubenko.server1.service.UserService;
 
 import java.util.Arrays;
@@ -16,9 +17,11 @@ import java.util.List;
 @Controller
 public class DashBoardController {
     private final UserService userService;
+    private final MessageService messageService;
 
-    public DashBoardController(UserService userService) {
+    public DashBoardController(UserService userService, MessageService messageService) {
         this.userService = userService;
+        this.messageService=messageService;
     }
 
     @GetMapping("/dashboard")
@@ -26,15 +29,15 @@ public class DashBoardController {
         if (authentication != null && authentication.isAuthenticated()) {
             String username = authentication.getName();
             model.addAttribute("username", authentication.getName());
-            model.addAttribute("unreadCount",userService.getUnreadCount(username));
-            model.addAttribute("messages",userService.getUserMessages(username));
+            model.addAttribute("unreadCount",messageService.getUnreadCount(username));
+            model.addAttribute("messages",messageService.getUserMessages(username));
         }
         return "dashboard";
     }
 
     public String markMessagesAsRead(Authentication authentication){
         if(authentication!=null && authentication.isAuthenticated()){
-            userService.markAllAsRead(authentication.getName());
+            messageService.markAllAsRead(authentication.getName());
         }
         return "redirect:/dashboard";
     }
