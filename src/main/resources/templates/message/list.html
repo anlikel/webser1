@@ -19,18 +19,42 @@
     </div>
 
     <div th:unless="${messages.empty}" class="list-group">
-        <div th:each="message : ${messages}" class="list-group-item">
+        <a th:each="message : ${messages}"
+           th:href="@{/messages/{id}(id=${message.id})}"
+           class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">
                     От: <span th:text="${message.sender.username}"></span>
                 </h5>
                 <small th:text="${#temporals.format(message.createdAt, 'dd.MM.yyyy HH:mm')}"></small>
             </div>
-            <p class="mb-1" th:text="${message.content}"></p>
+            <p class="mb-1" th:text="${message.content.length() > 50} ?
+                ${message.content.substring(0, 50) + '...'} : ${message.content}"></p>
             <small th:class="${message.read} ? 'text-muted' : 'text-primary'">
                 <span th:text="${message.read} ? 'Прочитано' : 'Новое'"></span>
             </small>
-        </div>
+        </a>
+
+        <nav th:if="${totalPages > 1}" class="mt-3">
+            <ul class="pagination">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/messages(page=0, size=${size})}">Первая</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/messages(page=${currentPage-1}, size=${size})}">Предыдущая</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages-1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/messages(page=${i}, size=${size})}" th:text="${i+1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/messages(page=${currentPage+1}, size=${size})}">Следующая</a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/messages(page=${totalPages-1}, size=${size})}">Последняя</a>
+                </li>
+            </ul>
+        </nav>
     </div>
 </div>
 </body>
