@@ -4,6 +4,7 @@ package ru.gubenko.server1.model.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name="messages")
@@ -71,5 +72,10 @@ public class Message {
 
     public void setSender(User sender) {
         this.sender = sender;
+    }
+
+    public String toString(){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return String.format("Message from %s %s",getSender().getUsername(),getCreatedAt().format(formatter));
     }
 }

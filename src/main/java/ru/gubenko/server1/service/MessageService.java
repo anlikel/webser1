@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.gubenko.server1.exception.AccessDeniedException;
 import ru.gubenko.server1.model.entity.Message;
 import ru.gubenko.server1.model.entity.User;
 import ru.gubenko.server1.repository.MessageRepository;
@@ -42,14 +43,13 @@ public class MessageService {
     }
 
     private User getUserOrThrow(String username){
-        Optional<User> opt= Optional.of(userRepository.findByUsername(username)
-                .orElseThrow(()->new UsernameNotFoundException("user not found")));
-        return opt.get();
+        return userRepository.findByUsername(username)
+                .orElseThrow(()->new UsernameNotFoundException("user not found"));
     }
 
-    public void sendMessage(String senderUsername,String recipientUsername,String content){
-        User sender=getUserOrThrow(senderUsername);
-        User recipient=getUserOrThrow(recipientUsername);
+    public void sendMessage(String senderUserName,String recipientUserName,String content){
+        User sender=getUserOrThrow(senderUserName);
+        User recipient=getUserOrThrow(recipientUserName);
 
         Message message=new Message();
         message.setContent(content);
@@ -60,4 +60,25 @@ public class MessageService {
 
         messageRepository.save(message);
     }
+
+    private Message getMessagerOrThrow(Long id){
+        return messageRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+    }
+
+    public Message getMessage(Long id,User currentUser){
+        Message message=getMessagerOrThrow(id);
+
+        if(!message.getRecipient().equals(currentUser)){
+            throw new AccessDeniedException("you are not recipient");
+        }
+
+        if(!message.isRead()){
+            message.setRead(true);
+            messageRepository.save(message);
+        }
+        return message;
+    }
 }
+
+

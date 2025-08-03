@@ -46,7 +46,12 @@
                     <a href="/dashboard" class="list-group-item list-group-item-action active">Главная</a>
                     <a href="/profile" class="list-group-item list-group-item-action">Профиль</a>
                     <a href="/settings" class="list-group-item list-group-item-action">Настройки</a>
-                    <!-- Добавляем пункт меню для админа -->
+
+                    <!-- ообщения -->
+                    <a href="/messages" class="list-group-item list-group-item-action">
+                        <i class="bi bi-envelope"></i> Сообщения
+                    </a>
+                    <!-- админка -->
                     <a sec:authorize="hasRole('ADMIN')"
                        href="/console"
                        class="list-group-item list-group-item-action list-group-item-danger">
@@ -127,7 +132,7 @@
                                 </div>
                                 <small class="text-muted message-time">
                                     <i class="bi bi-clock"></i>
-                                    <span th:text="${#temporals.format(#dates.createNow(), 'HH:mm')}"></span>
+                                    <span th:text="${#temporals.format(currentTime, 'HH:mm')}"></span>
                                 </small>
                             </div>
                         </a>

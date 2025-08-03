@@ -107,8 +107,7 @@ public class UserService implements UserDetailsService {
     }
 
     private User getUserOrThrow(String username){
-        Optional<User> opt= Optional.of(userRepository.findByUsername(username)
-                .orElseThrow(()->new UsernameNotFoundException("user not found")));
-        return opt.get();
+       return userRepository.findByUsername(username)
+                .orElseThrow(()->new UsernameNotFoundException("user not found"));
     }
 }
