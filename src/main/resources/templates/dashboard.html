@@ -134,7 +134,7 @@
 
                     <div th:unless="${messages.empty}" class="list-group">
                         <a th:each="message : ${messages}"
-                           th:href="@{/messages/{id}(id=${message.id})}"
+                           th:href="@{/messages/view/{id}(id=${message.id})}"
                            th:classappend="${!message.read} ? 'unread-message' : ''"
                            class="list-group-item list-group-item-action">
                             <div class="d-flex w-100 justify-content-between">
@@ -154,20 +154,20 @@
                         <nav th:if="${totalPages > 1}" class="mt-3 p-3">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                    <a class="page-link" th:href="@{/dashboard(page=0, size=${size})}">Первая</a>
+                                    <a class="page-link" th:href="@{/messages(page=0, size=${size})}">Первая</a>
                                 </li>
                                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                                    <a class="page-link" th:href="@{/dashboard(page=${currentPage-1}, size=${size})}">Предыдущая</a>
+                                    <a class="page-link" th:href="@{/messages(page=${currentPage-1}, size=${size})}">Предыдущая</a>
                                 </li>
                                 <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages-1)}"
                                     th:classappend="${i == currentPage} ? 'active'">
-                                    <a class="page-link" th:href="@{/dashboard(page=${i}, size=${size})}" th:text="${i+1}"></a>
+                                    <a class="page-link" th:href="@{/messages(page=${i}, size=${size})}" th:text="${i+1}"></a>
                                 </li>
                                 <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
-                                    <a class="page-link" th:href="@{/dashboard(page=${currentPage+1}, size=${size})}">Следующая</a>
+                                    <a class="page-link" th:href="@{/messages(page=${currentPage+1}, size=${size})}">Следующая</a>
                                 </li>
                                 <li class="page-item" th:classappend="${currentPage == totalPages-1} ? 'disabled'">
-                                    <a class="page-link" th:href="@{/dashboard(page=${totalPages-1}, size=${size})}">Последняя</a>
+                                    <a class="page-link" th:href="@{/messages(page=${totalPages-1}, size=${size})}">Последняя</a>
                                 </li>
                             </ul>
                         </nav>

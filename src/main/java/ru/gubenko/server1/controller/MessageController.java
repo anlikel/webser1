@@ -60,7 +60,7 @@ public class MessageController {
         return "redirect:/messages";
     }
 
-    @GetMapping("message/{id}")
+    @GetMapping
     public String viewMessages(
             @RequestParam(defaultValue="0") int page,
             @RequestParam(defaultValue="10") int size,
@@ -79,7 +79,7 @@ public class MessageController {
         return "message/list";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/view/{id}")
     public String viewMessage(
             @PathVariable Long id,
             Model model,

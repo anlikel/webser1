@@ -16,9 +16,6 @@ import ru.gubenko.server1.model.entity.Message;
 import ru.gubenko.server1.service.MessageService;
 import ru.gubenko.server1.service.UserService;
 
-import java.util.Arrays;
-import java.util.List;
-
 @Controller
 public class DashBoardController {
     private final UserService userService;
@@ -34,29 +31,29 @@ public class DashBoardController {
             Authentication authentication,
             Model model,
             @RequestParam(defaultValue="0") int page,
-            @RequestParam(defaultValue="10") int size) {
+            @RequestParam(defaultValue="10") int size,
+            RedirectAttributes redirectAttributes) {
 
         if (authentication != null && authentication.isAuthenticated()) {
-            String username = authentication.getName();
-            Pageable pageable= PageRequest.of(page,size, Sort.by("createdAt").descending());
+            try {
+                String username = authentication.getName();
+                Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-            Page<Message> messagesPage=messageService.getUserMessages(username,pageable);
+                Page<Message> messagesPage = messageService.getUserMessages(username, pageable);
 
-            model.addAttribute("username", username);
-            model.addAttribute("unreadCount",messageService.getUnreadCount(username));
-            model.addAttribute("messages",messagesPage.getContent());
-            model.addAttribute("currentPage",messagesPage.getNumber());
-            model.addAttribute("totalPages",messagesPage.getTotalPages());
-            model.addAttribute("size",size);
+                model.addAttribute("username", username);
+                model.addAttribute("unreadCount", messageService.getUnreadCount(username));
+                model.addAttribute("messages", messagesPage.getContent());
+                model.addAttribute("currentPage", messagesPage.getNumber());
+                model.addAttribute("totalPages", messagesPage.getTotalPages());
+                model.addAttribute("size", size);
+            }
+            catch (Exception e) {
+                redirectAttributes.addFlashAttribute("error", "Ошибка при загрузке сообщений");
+                return "redirect:/dashboard";
+            }
         }
         return "dashboard";
-    }
-
-    public String markMessagesAsRead(Authentication authentication){
-        if(authentication!=null && authentication.isAuthenticated()){
-            messageService.markAllAsRead(authentication.getName());
-        }
-        return "redirect:/dashboard";
     }
 
     @GetMapping("/profile")
