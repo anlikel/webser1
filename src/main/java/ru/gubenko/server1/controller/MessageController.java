@@ -79,7 +79,7 @@ public class MessageController {
         return "message/list";
     }
 
-    @GetMapping("/message/{id}")
+    @GetMapping("/{id}")
     public String viewMessage(
             @PathVariable Long id,
             Model model,

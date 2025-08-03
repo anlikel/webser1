@@ -19,7 +19,7 @@ public class Message {
     private boolean isRead;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="recipient_id")
     private User recipient;
 
     @ManyToOne

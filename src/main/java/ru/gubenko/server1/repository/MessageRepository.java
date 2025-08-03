@@ -9,7 +9,7 @@ import ru.gubenko.server1.model.entity.User;
 import java.util.List;
 
 public interface MessageRepository extends JpaRepository<Message,Long> {
-    Page<Message> findByRecipientOrderByCreatedAtDesc(User user, Pageable pageable);
-    List<Message> findByRecipientAndIsReadFalse(User user);
-    long countByRecipientAndIsReadFalse(User user);
+    Page<Message> findByRecipientOrderByCreatedAtDesc(User recipient, Pageable pageable);
+    List<Message> findByRecipientAndIsReadFalse(User recipient);
+    long countByRecipientAndIsReadFalse(User recipient);
 }
