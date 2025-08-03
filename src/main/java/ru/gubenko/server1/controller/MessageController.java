@@ -1,6 +1,10 @@
 package ru.gubenko.server1.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -57,9 +61,21 @@ public class MessageController {
     }
 
     @GetMapping
-    public String viewMessages(Model model,Authentication authentication){
-        String username=authentication.getName();
-        model.addAttribute("messages",messageService.getUserMessages(username));
+    public String viewMessages(
+            @RequestParam(defaultValue="0") int page,
+            @RequestParam(defaultValue="10") int size,
+            Model model,
+            Authentication authentication){
+
+        String username= authentication.getName();
+        Pageable pageable= PageRequest.of(page,size, Sort.by("createdAt").descending());
+        Page<Message> messagePage=messageService.getUserMessages(username,pageable);
+
+        model.addAttribute("messages",messagePage.getContent());
+        model.addAttribute("currentPage",page);
+        model.addAttribute("totalPages",messagePage.getTotalPages());
+        model.addAttribute("totalItems",messagePage.getTotalElements());
+
         return "message/list";
     }
 

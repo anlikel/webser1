@@ -1,19 +1,18 @@
 package ru.gubenko.server1.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.gubenko.server1.exception.AccessDeniedException;
 import ru.gubenko.server1.model.entity.Message;
 import ru.gubenko.server1.model.entity.User;
 import ru.gubenko.server1.repository.MessageRepository;
-import ru.gubenko.server1.repository.RoleRepository;
 import ru.gubenko.server1.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MessageService {
@@ -26,9 +25,9 @@ public class MessageService {
         this.messageRepository=messageRepository;
     }
 
-    public List<Message> getUserMessages(String username){
+    public Page<Message> getUserMessages(String username, Pageable pageable){
         User user=getUserOrThrow(username);
-        return messageRepository.findByRecipientOrderByCreatedAtDesc(user);
+        return messageRepository.findByRecipientOrderByCreatedAtDesc(user,pageable);
     }
 
     public Long getUnreadCount(String username){
