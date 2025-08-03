@@ -38,6 +38,7 @@ public class MessageService {
     public void markAllAsRead(String username){
         User user=getUserOrThrow(username);
         List<Message>unreadMessages=messageRepository.findByRecipientAndIsReadFalse(user);
+        unreadMessages.forEach(message->message.setRead(true));
         messageRepository.saveAll(unreadMessages);
     }
 
@@ -60,13 +61,13 @@ public class MessageService {
         messageRepository.save(message);
     }
 
-    private Message getMessagerOrThrow(Long id){
+    private Message getMessageOrThrow(Long id){
         return messageRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
     }
 
     public Message getMessage(Long id,User currentUser){
-        Message message=getMessagerOrThrow(id);
+        Message message=getMessageOrThrow(id);
 
         if(!message.getRecipient().equals(currentUser)){
             throw new AccessDeniedException("you are not recipient");

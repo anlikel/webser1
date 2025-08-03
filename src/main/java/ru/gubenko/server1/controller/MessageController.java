@@ -60,7 +60,7 @@ public class MessageController {
         return "redirect:/messages";
     }
 
-    @GetMapping
+    @GetMapping("message/{id}")
     public String viewMessages(
             @RequestParam(defaultValue="0") int page,
             @RequestParam(defaultValue="10") int size,
@@ -87,5 +87,19 @@ public class MessageController {
         Message message=messageService.getMessage(id,currentUser);
         model.addAttribute("message",message);
         return "message/view";
+    }
+
+    @PostMapping("/mark-as-read")
+    public String markAllAsRead(Authentication authentication,RedirectAttributes redirectAttributes){
+        if(authentication!=null && authentication.isAuthenticated()){
+            try{
+                messageService.markAllAsRead(authentication.getName());
+                redirectAttributes.addFlashAttribute("success","all messages marked as read");
+            }
+            catch(Exception e){
+                redirectAttributes.addFlashAttribute("error","cant renew message status");
+            }
+        }
+        return "redirect:/messages";
     }
 }
