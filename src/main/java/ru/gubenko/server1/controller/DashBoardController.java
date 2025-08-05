@@ -76,8 +76,8 @@ public class DashBoardController {
 
     @PostMapping("/profile/update")
     public String updateProfile(
-        @RequestParam String email,
-        @RequestParam String phone,
+        @RequestParam(required = false) String email,
+        @RequestParam(required = false) String phone,
         Authentication authentication,
         RedirectAttributes redirectAttributes){
         if(authentication!=null && authentication.isAuthenticated()){

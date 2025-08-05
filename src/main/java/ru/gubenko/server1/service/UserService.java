@@ -93,8 +93,14 @@ public class UserService implements UserDetailsService {
         if(email!=null && !email.isEmpty()){
             user.setEmail(email);
         }
+        else{
+            user.setEmail(null);
+        }
         if(phone!=null && !phone.isEmpty()){
             user.setPhone(phone);
+        }
+        else{
+            user.setPhone(null);
         }
         userRepository.save(user);
     }
