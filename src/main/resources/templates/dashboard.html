@@ -134,7 +134,7 @@
 
                     <div th:unless="${messages.empty}" class="list-group">
                         <a th:each="message : ${messages}"
-                           th:href="@{/messages/view/{id}(id=${message.id})}"
+                           th:href="@{/messages/{id}(id=${message.id})}"
                            th:classappend="${!message.read} ? 'unread-message' : ''"
                            class="list-group-item list-group-item-action">
                             <div class="d-flex w-100 justify-content-between">
