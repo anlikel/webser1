@@ -67,6 +67,11 @@ public class MessageService {
     }
 
     public Message getMessage(Long id,User currentUser){
+
+        if (currentUser == null) {
+        throw new AccessDeniedException("user not authenticated");
+        }
+
         Message message=getMessageOrThrow(id);
 
         if(!message.getRecipient().getId().equals(currentUser.getId())){

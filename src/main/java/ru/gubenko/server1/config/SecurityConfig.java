@@ -15,8 +15,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+
+                .headers(headers -> headers
+                        .frameOptions(frame -> frame
+                                .sameOrigin()
+                        )
+                )
+
                 .authorizeHttpRequests(auth -> auth
-                        // Публичные пути
                         .requestMatchers(
                                 "/",
                                 "/home",
@@ -28,42 +34,31 @@ public class SecurityConfig {
                                 "/webjars/**"
                         ).permitAll()
 
-                        // Админские пути
-                        .requestMatchers(
-                                "/console/**",
-                                "/console"
-                        ).hasRole("ADMIN")
+                        .requestMatchers("/console/**", "/h2-console/**").hasRole("ADMIN")
 
-                        // Пути для сообщений
-                        .requestMatchers(
-                                "/messages/**",
-                                "/dashboard"
-                        ).authenticated()
+                        .requestMatchers("/messages/**", "/dashboard").authenticated()
 
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .defaultSuccessUrl("/dashboard", true)
+                        .failureUrl("/login?error=true")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/login?logout=true")
                         .permitAll()
-                );
-
-        // Настройки для H2 Console
-        http.csrf(csrf -> csrf
-                .ignoringRequestMatchers(
-                        "/console/**",
-                        "/h2-console/**"
-                ));
-
-        http.headers(headers -> headers
-                .frameOptions(frame -> frame
-                        .sameOrigin()
                 )
-        );
+                .exceptionHandling(handling -> handling
+                        .accessDeniedPage("/access-denied")
+                )
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers(
+                                "/console/**",
+                                "/h2-console/**"
+                        )
+                );
 
         return http.build();
     }

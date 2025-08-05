@@ -80,14 +80,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user=getUserOrThrow(username);
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                user.isEnabled(),
-                true, true, true,
-                user.getRoles()
-        );
+         return getUserOrThrow(username);
     }
 
     public User findByUserName(String username){

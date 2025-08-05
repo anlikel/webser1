@@ -79,11 +79,12 @@ public class MessageController {
         return "message/list";
     }
 
-    @GetMapping("/view/{id}")
+    @GetMapping("/{id}")
     public String viewMessage(
             @PathVariable Long id,
             Model model,
             @AuthenticationPrincipal User currentUser) {
+        System.out.println("Current user in controller: " + currentUser);
         Message message=messageService.getMessage(id,currentUser);
         model.addAttribute("message",message);
         return "message/view";
