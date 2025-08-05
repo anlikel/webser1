@@ -69,7 +69,7 @@ public class MessageService {
     public Message getMessage(Long id,User currentUser){
         Message message=getMessageOrThrow(id);
 
-        if(!message.getRecipient().equals(currentUser)){
+        if(!message.getRecipient().getId().equals(currentUser.getId())){
             throw new AccessDeniedException("you are not recipient");
         }
 

@@ -16,22 +16,35 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
+                        // Публичные пути
                         .requestMatchers(
                                 "/",
                                 "/home",
                                 "/register",
+                                "/login",
                                 "/css/**",
-                                "/js/**"
+                                "/js/**",
+                                "/images/**",
+                                "/webjars/**"
                         ).permitAll()
+
+                        // Админские пути
                         .requestMatchers(
-                                "/console/**",  // Разрешаем доступ к H2 Console
-                                "/console" )     // На всякий случай добавляем и без слеша
-                        .hasRole("ADMIN")
+                                "/console/**",
+                                "/console"
+                        ).hasRole("ADMIN")
+
+                        // Пути для сообщений
+                        .requestMatchers(
+                                "/messages/**",
+                                "/dashboard"
+                        ).authenticated()
+
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/dashboard",true)
+                        .defaultSuccessUrl("/dashboard", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -39,9 +52,12 @@ public class SecurityConfig {
                         .permitAll()
                 );
 
-        // Критически важные настройки для H2 Console
+        // Настройки для H2 Console
         http.csrf(csrf -> csrf
-                .ignoringRequestMatchers("/console/**"));
+                .ignoringRequestMatchers(
+                        "/console/**",
+                        "/h2-console/**"
+                ));
 
         http.headers(headers -> headers
                 .frameOptions(frame -> frame
@@ -51,6 +67,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

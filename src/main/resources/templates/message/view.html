@@ -2,40 +2,18 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Сообщение</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <title>Просмотр сообщения</title>
 </head>
 <body>
-<div class="container mt-5">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h4>Сообщение от <span th:text="${message.sender.username}"></span></h4>
-            <a th:href="@{/messages}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Назад
-            </a>
-        </div>
-        <div class="card-body">
-            <div class="mb-3 text-muted">
-                <small th:text="${#temporals.format(message.createdAt, 'dd.MM.yyyy HH:mm')}"></small>
-                <span th:if="${message.read}" class="badge bg-success ms-2">Прочитано</span>
-                <span th:unless="${message.read}" class="badge bg-primary ms-2">Новое</span>
-            </div>
-            <div class="card-text p-3 bg-light rounded" th:text="${message.content}"></div>
-        </div>
-        <div class="card-footer">
-            <div class="d-flex justify-content-between">
-                <div>
-                    <span class="text-muted">Получатель: </span>
-                    <span th:text="${message.recipient.username}"></span>
-                </div>
-                <a th:href="@{/messages/new?replyTo={id}(id=${message.id})}"
-                   class="btn btn-primary">
-                    <i class="bi bi-reply"></i> Ответить
-                </a>
-            </div>
-        </div>
-    </div>
+<div th:if="${message}">
+    <h2>Сообщение от: <span th:text="${message.sender.username}"></span></h2>
+    <p>Текст: <span th:text="${message.content}"></span></p>
+    <p>Дата: <span th:text="${#temporals.format(message.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+    <p>Статус: <span th:text="${message.read} ? 'Прочитано' : 'Новое'"></span></p>
 </div>
+<div th:unless="${message}">
+    <p>Сообщение не найдено!</p>
+</div>
+<a th:href="@{/messages}">Назад к списку</a>
 </body>
 </html>
